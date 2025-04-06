@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Banners para LinkedIn</title>
+    <style>
+        :root {
+            --linkedin-blue: #0a66c2;
+            --dark-blue: #004182;
+            --preview-scale: 0.5;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Sección superior: Preview + Descarga */
+        .preview-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .preview-container {
+            display: inline-block;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .preview-wrapper {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            display: inline-block;
+        }
+        
+        #banner-preview {
+            width: 1584px;
+            height: 396px;
+            background: linear-gradient(135deg, var(--linkedin-blue) 0%, var(--dark-blue) 100%);
+            transform: scale(var(--preview-scale));
+            transform-origin: top left;
+            position: relative;
+        }
+        
+        .profile-photo-marker {
+            position: absolute;
+            top: 75%;
+            left: 180px;
+            width: 240px;
+            height: 240px;
+            border: 4px dashed rgba(255,255,255,0.7);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            clip-path: inset(0 0 15% 0);
+        }
+        
+        .text-field {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            max-width: 60%;
+        }
+        
+        #header-text {
+            top: 80px;
+            right: 100px;
+            font-size: 42px;
+            text-align: right;
+        }
+        
+        #value-prop-text {
+            top: 150px;
+            right: 100px;
+            font-size: 28px;
+            text-align: right;
+        }
+        
+        .contact-item {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            text-align: right;
+            right: 100px;
+            font-size: 20px;
+        }
+        
+        #website-text { bottom: 120px; }
+        #phone-text { bottom: 80px; }
+        #email-text { bottom: 40px; }
+        
+        .download-btn {
+            background-color: var(--linkedin-blue);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background-color: var(--dark-blue);
+        }
+        
+        /* Sección inferior: Controles */
+        .controls-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group h2 {
+            color: var(--linkedin-blue);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        input[type="color"] {
+            height: 40px;
+            padding: 2px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .color-option, .pattern-option {
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .color-option:hover, .pattern-option:hover {
+            border-color: var(--linkedin-blue);
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            :root {
+                --preview-scale: 0.3;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+        }
+    </style>
+    <!-- Font Awesome (solo los iconos necesarios) -->
+    <style>
+        .fa,.fas{font-weight:900}.fa,.fab,.fad,.fal,.far,.fas{display:inline-block;font-style:normal;font-variant:normal;text-rendering:auto;line-height:1}.fa-globe:before{content:"\f0ac"}.fa-phone:before{content:"\f095"}.fa-envelope:before{content:"\f0e0"}.fa-download:before{content:"\f019"}
+    </style>
+</head>
+<body>
+    <!-- Sección Superior: Previsualización + Descarga -->
+    <div class="preview-section">
+        <h1>Generador de Banners para LinkedIn</h1>
+        <p>Tamaño real: 1584×396px | El círculo marca la posición de tu foto</p>
+        
+        <div class="preview-container">
+            <div class="preview-wrapper">
+                <div id="banner-preview">
+                    <div class="profile-photo-marker"></div>
+                    <div id="header-text" class="text-field">¡Conectemos y crezcamos juntos!</div>
+                    <div id="value-prop-text" class="text-field">Director de Marketing Digital</div>
+                    <div id="website-text" class="contact-item">
+                        <i class="fas fa-globe"></i> https://miweb.com
+                    </div>
+                    <div id="phone-text" class="contact-item">
+                        <i class="fas fa-phone"></i> +123456789
+                    </div>
+                    <div id="email-text" class="contact-item">
+                        <i class="fas fa-envelope"></i> contacto@miempresa.com
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="download-btn" id="download-btn">
+            <i class="fas fa-download"></i> Descargar Banner
+        </button>
+    </div>
+    
+    <!-- Sección Inferior: Controles -->
+    <div class="controls-section">
+        <div class="control-group">
+            <h2>Contenido</h2>
+            <label for="header-input">Encabezado/Gancho:</label>
+            <textarea id="header-input" placeholder="Ej: ¡Conectemos y crezcamos juntos!"></textarea>
+            
+            <label for="value-prop-input">Rol/Propuesta de Valor:</label>
+            <textarea id="value-prop-input" placeholder="Ej: Director de Marketing | Especialista en Branding"></textarea>
+        </div>
+        
+        <div class="control-group">
+            <h2>Contacto</h2>
+            <label for="website-input">Sitio web:</label>
+            <input type="text" id="website-input" placeholder="https://miweb.com">
+            
+            <label for="phone-input">Teléfono:</label>
+            <input type="text" id="phone-input" placeholder="+123456789">
+            
+            <label for="email-input">Correo electrónico:</label>
+            <input type="text" id="email-input" placeholder="contacto@miempresa.com">
+        </div>
+        
+        <div class="control-group">
+            <h2>Diseño</h2>
+            <label for="background-upload">Imagen de fondo:</label>
+            <input type="file" id="background-upload" accept="image/*">
+            
+            <label>Color del texto:</label>
+            <input type="color" id="text-color" value="#ffffff">
+            
+            <label>Paletas de colores:</label>
+            <div class="options-grid" id="color-palettes"></div>
+            
+            <label>Patrones de fondo:</label>
+            <div class="options-grid" id="pattern-options"></div>
+        </div>
+        
+        <div class="control-group">
+            <h2>Opciones de Descarga</h2>
+            <label for="image-format">Formato:</label>
+            <select id="image-format">
+                <option value="jpeg">JPEG (alta calidad)</option>
+                <option value="png">PNG (sin pérdida)</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        // Paletas de colores
+        const colorPalettes = [
+            { name: "Azul LinkedIn", colors: ["#0a66c2", "#004182"] },
+            { name: "Azul Cielo", colors: ["#0077b5", "#00a0dc"] },
+            { name: "Morado Profundo", colors: ["#6a11cb", "#2575fc"] },
+            { name: "Verde Corporativo", colors: ["#11998e", "#38ef7d"] },
+            { name: "Rojo Energía", colors: ["#ff416c", "#ff4b2b"] },
+            { name: "Gris Oscuro", colors: ["#232526", "#414345"] }
+        ];
+
+        // Patrones de fondo
+        const patterns = [
+            { name: "Topografía", style: "linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%)" },
+            { name: "Nodos", style: "radial-gradient(circle, #5e35b1 0%, #0a66c2 100%)" },
+            { name: "Ondas", style: "linear-gradient(to right, #0f2027, #203a43, #2c5364)" }
+        ];
+
+        // Inicializar opciones
+        function initOptions() {
+            const palettesContainer = document.getElementById('color-palettes');
+            colorPalettes.forEach(palette => {
+                const div = document.createElement('div');
+                div.className = 'color-option';
+                div.style.background = palette.colors.length > 1 
+                    ? `linear-gradient(135deg, ${palette.colors.join(', ')})` 
+                    : palette.colors[0];
+                div.title = palette.name;
+                div.addEventListener('click', () => {
+                    document.getElementById('banner-preview').style.backgroundImage = 'none';
+                    document.getElementById('banner-preview').style.background = palette.colors.length > 1 
+                        ? `linear-gradient(135deg, ${palette.colors.join(', ')})` 
+                        : palette.colors[0];
+                });
+                palettesContainer.appendChild(div);
+            });
+
+            const patternsContainer = document.getElementById('pattern-options');
+            patterns.forEach(pattern => {
+                const div = document.createElement('div');
+                div.className = 'pattern-option';
+                div.style.background = pattern.style;
+                div.title = pattern.name;
+                div.addEventListener('click', () => {
+                    document.getElementById('banner-preview').style.backgroundImage = 'none';
+                    document.getElementById('banner-preview').style.background = pattern.style;
+                });
+                patternsContainer.appendChild(div);
+            });
+        }
+
+        // Cargar imagen de fondo
+        document.getElementById('background-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('banner-preview').style.backgroundImage = `url(${event.target.result})`;
+                    document.getElementById('banner-preview').style.background = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Controladores de texto
+        document.getElementById('header-input').addEventListener('input', function(e) {
+            document.getElementById('header-text').textContent = e.target.value;
+        });
+
+        document.getElementById('value-prop-input').addEventListener('input', function(e) {
+            document.getElementById('value-prop-text').textContent = e.target.value;
+        });
+
+        document.getElementById('website-input').addEventListener('input', function(e) {
+            document.getElementById('website-text').innerHTML = `<i class="fas fa-globe"></i> ${e.target.value || "https://miweb.com"}`;
+        });
+
+        document.getElementById('phone-input').addEventListener('input', function(e) {
+            document.getElementById('phone-text').innerHTML = `<i class="fas fa-phone"></i> ${e.target.value || "+123456789"}`;
+        });
+
+        document.getElementById('email-input').addEventListener('input', function(e) {
+            document.getElementById('email-text').innerHTML = `<i class="fas fa-envelope"></i> ${e.target.value || "contacto@miempresa.com"}`;
+        });
+
+        // Color del texto
+        document.getElementById('text-color').addEventListener('input', function(e) {
+            const color = e.target.value;
+            document.getElementById('header-text').style.color = color;
+            document.getElementById('value-prop-text').style.color = color;
+            document.querySelectorAll('.contact-item').forEach(item => {
+                item.style.color = color;
+            });
+        });
+
+        // Descargar banner
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const preview = document.getElementById('banner-preview');
+            const canvas = document.createElement('canvas');
+            canvas.width = 1584;
+            canvas.height = 396;
+            const ctx = canvas.getContext('2d');
+            
+            // Dibujar fondo
+            const bgStyle = getComputedStyle(preview);
+            if (bgStyle.backgroundImage !== 'none') {
+                const img = new Image();
+                img.src = bgStyle.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    drawTextElements();
+                };
+            } else {
+                ctx.fillStyle = bgStyle.backgroundColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawTextElements();
+            }
+            
+            function drawTextElements() {
+                ctx.textAlign = 'right';
+                
+                // Encabezado
+                const header = document.getElementById('header-text');
+                ctx.font = 'bold 42px Arial';
+                ctx.fillStyle = getComputedStyle(header).color;
+                ctx.fillText(header.textContent, 1584 - 100, 80);
+                
+                // Propuesta de valor
+                const valueProp = document.getElementById('value-prop-text');
+                ctx.font = 'bold 28px Arial';
+                ctx.fillStyle = getComputedStyle(valueProp).color;
+                ctx.fillText(valueProp.textContent, 1584 - 100, 150);
+                
+                // Contactos
+                ctx.font = 'bold 20px Arial';
+                const contactItems = [
+                    { element: 'website-text', y: 396 - 120 },
+                    { element: 'phone-text', y: 396 - 80 },
+                    { element: 'email-text', y: 396 - 40 }
+                ];
+                
+                contactItems.forEach(item => {
+                    const el = document.getElementById(item.element);
+                    if (el) {
+                        ctx.fillStyle = getComputedStyle(el).color;
+                        const text = el.textContent.replace(/🌐|📞|✉️/g, '').trim();
+                        ctx.fillText(text, 1584 - 100, item.y);
+                    }
+                });
+                
+                // Crear enlace de descarga
+                const link = document.createElement('a');
+                const format = document.getElementById('image-format').value;
+                link.download = `linkedin-banner-${new Date().getTime()}.${format}`;
+                link.href = canvas.toDataURL(`image/${format}`, format === 'jpeg' ? 0.95 : 1);
+                link.click();
+            }
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', initOptions);
+    </script>
+</body>
+</html>
